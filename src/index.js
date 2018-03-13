@@ -72,10 +72,22 @@ class Game extends React.Component {
     });
   }
 
+
+
   jumpTo(step) {
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
+    });
+  }
+
+  resetState(){
+    this.setState({
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      stepNumber: 0,
+      xIsNext: true,
     });
   }
 
@@ -113,6 +125,7 @@ class Game extends React.Component {
         <div className="game-info">
           <div>{status}</div>
           <ol>{moves}</ol>
+          <div><button onClick={() => this.resetState()}>Restart Game</button></div>
         </div>
       </div>
     );
