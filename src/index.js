@@ -4,7 +4,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className="square" name={props.displayName} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -14,6 +14,7 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        displayName={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -95,6 +96,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    const projectedNextMove = calculateNextMove(current.squares);
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -114,6 +116,13 @@ class Game extends React.Component {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
+    let nextMove;
+    if (winner) {
+      nextMove = '';
+    } else {
+      nextMove = projectedNextMove;
+    }
+
     return (
       <div className="game">
         <div className="game-board">
@@ -124,8 +133,9 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <div>Next Move is: <button className="NextMove" name="NextMove" onClick={() => this.handleClick(nextMove)}>{nextMove}</button></div>
           <ol>{moves}</ol>
-          <div><button onClick={() => this.resetState()}>Restart Game</button></div>
+          <div><button name="RESET" onClick={() => this.resetState()}>Restart Game</button></div>
         </div>
       </div>
     );
@@ -157,4 +167,23 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function calculateNextMove(squares) {
+  let emptyBoxes = [];
+  for (let i = 0; i < 9; i++) {
+    if (!squares[i]) {
+      emptyBoxes.push(i);
+    }
+  }
+  if (emptyBoxes.length>0) {
+      return emptyBoxes[randomIntFromInterval(0,emptyBoxes.length-1)];
+  }
+  return null;
+}
+
+function randomIntFromInterval(min,max)
+{
+    let randomVal = Math.floor(Math.random()*(max-min+1)+min)
+    return randomVal;
 }
